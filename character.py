@@ -22,10 +22,10 @@ class Charcter:
          self.respon = 6
          self.situation = 0 # 0= 평소 상태 1= 공격 시작 상태 2 공격 상태 2= 근접공격시작 3= 근접 공격  3= 투척상태
          self.Old_situation = 0
-     def animation(self):
+     def animation(self,pl_x,pl_y):
          if self.respon>0:
              x, y, wid, hei, px, py = charcter_sheet.responing[6-self.respon]
-             self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, 400 + px, 50 + py)
+             self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, pl_x + px, pl_y + py)
              self.respon -= 1
              return
 
@@ -35,16 +35,16 @@ class Charcter:
          if self.direct == 1 :
             self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, 400 + px, 50 + py)
          elif self.direct == -1:
-             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, 400 - px, 50 + py)
+             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, pl_x - px, pl_y + py)
              pass
 
          # up_body
          self.body_frame = (self.body_frame + 1) % self.body_frame_m
          x, y, wid, hei, px, py = self.up_body_list[self.body_frame]
          if self.direct == 1:
-            self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, 400+px, 50+py)
+            self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, pl_x+px, pl_y+py)
          elif self.direct == -1:
-             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, 400 - px, 50 + py)
+             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, pl_x - px, pl_y + py)
 
          return
      def key_update(self, type, key):

@@ -1,8 +1,8 @@
-import character
+import map
 from pico2d import*
 
-open_canvas()
-Player = character.Charcter()
+open_canvas(900,600)
+world = map.World()
 program_on = True
 def handle_events():
     events = get_events()
@@ -10,14 +10,14 @@ def handle_events():
         if event.type == SDL_QUIT:
             program_on = False
         else:
-            Player.key_update(event.type, event.key)
+            world.key_update(event.type, event.key)
 
 
 
 while (program_on):
     clear_canvas()
-    Player.animation()
-    Player.update()
+    world.draw()
+    world.update()
     update_canvas()
     handle_events()
     delay(0.1)
