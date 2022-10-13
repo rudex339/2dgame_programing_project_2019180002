@@ -1,24 +1,15 @@
-import map
-from pico2d import*
+import pico2d
+import play_state
 
-open_canvas(900,600)
-world = map.World()
-program_on = True
-def handle_events():
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            program_on = False
-        else:
-            world.key_update(event.type, event.key)
+start_state = play_state # 모듈을 변수로 저장
 
-
-
-while (program_on):
-    clear_canvas()
-    world.draw()
-    world.update()
-    update_canvas()
-    handle_events()
-    delay(0.1)
-
+pico2d.open_canvas(900,600)
+start_state.enter() # 초기화
+#게임 로프
+while start_state.running:
+    start_state.handle_events()
+    start_state.update()
+    start_state.draw()
+    pico2d.delay(0.05)
+start_state.exit() # 종료
+pico2d.close_canvas()

@@ -18,6 +18,7 @@ class Charcter:
          self.direct_y = 0
          self.speed_x = 0
          self.speed_y = 0
+         self.speed = 5
          self.player_x = 40
          self.player_y = 50
 
@@ -25,10 +26,10 @@ class Charcter:
          self.respon = 6
          self.situation = 0 # 0= 평소 상태 1=  공격 상태 2= 근접공격시작 3= 근접 공격  3= 투척상태 주로 상체의 상태
          self.Old_situation = 0# 0= 평소 상태 1=  공격 상태 2= 근접공격시작 3= 근접 공격  3= 투척상태 주로 상체의 상태
-     def draw(self):
+     def draw(self, sc_x,sc_y):
          if self.respon>0:
              x, y, wid, hei, px, py = charcter_sheet.responing[6-self.respon]
-             self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, self.player_x + 2*px, self.player_y + 2*py, 2*wid, 2*hei)
+             self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, self.player_x + 2*px-sc_x, self.player_y + 2*py-sc_y, 2*wid, 2*hei)
              self.respon -= 1
              return
 
@@ -36,21 +37,21 @@ class Charcter:
          self.leg_frame = (self.leg_frame + 1) % self.leg_frame_m
          x, y, wid, hei, px, py = self.leg_list[self.leg_frame]
          if self.direct_x == 1 :
-            self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, self.player_x + px, self.player_y + py, 2*wid, 2*hei)
+            self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, self.player_x + 2*px-sc_x, self.player_y + 2*py-sc_y, 2*wid, 2*hei)
          elif self.direct_x == -1:
-             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, self.player_x - 2*px, self.player_y + 2*py, 2*wid, 2*hei)
+             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, self.player_x - 2*px-sc_x, self.player_y + 2*py-sc_y, 2*wid, 2*hei)
              pass
 
          # up_body
          self.body_frame = (self.body_frame + 1) % self.body_frame_m
          x, y, wid, hei, px, py = self.up_body_list[self.body_frame]
          if self.direct_x == 1:
-            self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, self.player_x+px, self.player_y+py)
+            self.image_1.clip_draw(x, 2379 - y - hei, wid, hei, self.player_x+2*px-sc_x, self.player_y+2*py-sc_y, 2*wid, 2*hei)
          elif self.direct_x == -1:
-             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, self.player_x - 2*px, self.player_y + 2*py, 2*wid, 2*hei)
+             self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, self.player_x - 2*px-sc_x, self.player_y + 2*py-sc_y, 2*wid, 2*hei)
 
          return
-     def key_update(self, type, key):
+     def handle_events(self, type, key):
          if self.respon <= 0:
              if type == SDL_KEYDOWN:
                 if key == SDLK_RIGHT:
@@ -136,7 +137,7 @@ class Charcter:
             self.body_frame_m = len(charcter_sheet.handgun_aim_up_body)
             self.body_frame = -1
      def update(self):
-        self.player_x += self.speed_x
-        self.player_y += self.speed_y
+        self.player_x += self.speed_x*self.speed
+        self.player_y += self.speed_y*self.speed
         self.animation()
         pass           
