@@ -1,15 +1,10 @@
 import pico2d
 import play_state
+import game_framework
 
 start_state = play_state # 모듈을 변수로 저장
 
 pico2d.open_canvas(900,600)
-start_state.enter() # 초기화
-#게임 로프
-while start_state.running:
-    start_state.handle_events()
-    start_state.update()
-    start_state.draw()
-    pico2d.delay(0.05)
-start_state.exit() # 종료
+game_framework.run(play_state)
+
 pico2d.close_canvas()

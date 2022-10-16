@@ -15,11 +15,6 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             quit()
-
-
-
-
-
 # 초기화
 def enter():
     global World, running
