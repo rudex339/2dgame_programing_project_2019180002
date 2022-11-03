@@ -1,6 +1,20 @@
 import charcter_sheet
 from pico2d import *
-
+RD, LD, RU, LU,UD,UU,DD,DU,X,Z = range(6)
+key_event_table = {
+    (SDL_KEYDOWN, SDLK_RIGHT): RD,
+    (SDL_KEYDOWN, SDLK_LEFT): LD,
+    (SDL_KEYUP, SDLK_RIGHT): RU,
+    (SDL_KEYUP, SDLK_LEFT): LU,
+    (SDL_KEYDOWN, SDLK_UP): UD,
+    (SDL_KEYDOWN, SDLK_DOWN): DD,
+    (SDL_KEYUP, SDLK_UP): UU,
+    (SDL_KEYUP, SDLK_DOWN): DU,
+    (SDL_KEYDOWN, SDLK_x): UD,
+    (SDL_KEYDOWN, SDLK_z): DD,
+    (SDL_KEYDOWN, SDLK_x): UD,
+    (SDL_KEYDOWN, SDLK_z): DD,
+}
 class Charcter:
      def __init__(self):
          self.leg_frame = -1
@@ -22,6 +36,7 @@ class Charcter:
          self.accel_y = 0
          self.player_x = 40
          self.player_y = 160
+         self.bullet = []
 
          self.life = 1
          self.respon = 6
