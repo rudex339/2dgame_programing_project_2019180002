@@ -1,6 +1,6 @@
 import charcter_sheet
 from pico2d import *
-RD, LD, RU, LU,UD,UU,DD,DU,X,Z = range(6)
+RD, LD, RU, LU, UD, UU, DD, DU, X, Z = range(6)
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RD,
     (SDL_KEYDOWN, SDLK_LEFT): LD,
@@ -10,10 +10,73 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_DOWN): DD,
     (SDL_KEYUP, SDLK_UP): UU,
     (SDL_KEYUP, SDLK_DOWN): DU,
-    (SDL_KEYDOWN, SDLK_x): UD,
-    (SDL_KEYDOWN, SDLK_z): DD,
-    (SDL_KEYDOWN, SDLK_x): UD,
-    (SDL_KEYDOWN, SDLK_z): DD,
+    (SDL_KEYDOWN, SDLK_x): X,
+    (SDL_KEYDOWN, SDLK_z): Z
+}
+class leg_IDLE:
+    def enter(self):
+        pass
+    def exit(self):
+        pass
+    def do(self):
+        pass
+    def draw(self):
+        pass
+class leg_RUN:
+    def enter(self):
+        pass
+    def exit(self):
+        pass
+    def do(self):
+        pass
+    def draw(self):
+        pass
+class leg_JUMP:
+    def enter(self):
+        pass
+    def exit(self):
+        pass
+    def do(self):
+        pass
+    def draw(self):
+        pass
+class body_IDLE:
+    def enter(self):
+        pass
+    def exit(self):
+        pass
+    def do(self):
+        pass
+    def draw(self):
+        pass
+class body_RUN:
+    def enter(self):
+        pass
+    def exit(self):
+        pass
+    def do(self):
+        pass
+    def draw(self):
+        pass
+class body_ATTACK:
+    def enter(self):
+        pass
+    def exit(self):
+        pass
+    def do(self):
+        pass
+    def draw(self):
+        pass
+leg_state = {
+    leg_IDLE:  {RU: leg_IDLE,  LU: leg_IDLE,  RD:  leg_RUN,  LD: leg_RUN, X: leg_JUMP, Z: leg_IDLE},
+    leg_RUN:   {RU: leg_IDLE,  LU: leg_IDLE, RD: leg_IDLE, LD: leg_IDLE, X: leg_JUMP, Z: leg_RUN},
+    leg_JUMP:   {RU: leg_IDLE,  LU: leg_IDLE, RD: leg_IDLE, LD: leg_IDLE, X: leg_JUMP, Z: leg_RUN}
+
+}
+body_state = {
+    body_IDLE:  {RU: body_IDLE,  LU: body_IDLE,  RD:  body_RUN,  LD: body_RUN, X: leg_JUMP, Z: body_ATTACK},
+    body_RUN:   {RU:  body_IDLE,  LU: leg_IDLE, RD: leg_IDLE, LD: leg_IDLE, X: leg_JUMP, Z: body_ATTACK},
+    body_ATTACK:   {RU: body_ATTACK,  LU: body_ATTACK, RD: body_ATTACK, LD: body_ATTACK, X: body_ATTACK, Z: body_ATTACK}
 }
 class Charcter:
      def __init__(self):
