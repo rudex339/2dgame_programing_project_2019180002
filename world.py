@@ -2,7 +2,6 @@ import character
 import object
 import stage
 from pico2d import*
-
 class World:
     def __init__(self):
         stage.enter()

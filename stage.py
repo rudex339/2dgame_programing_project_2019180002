@@ -71,9 +71,10 @@ def update():
 
 
 class stage1_1:
+    ground = None
     def __init__(self):
-
-        self.ground = [object.Box(40 * 3, 0, 0, 540 * 3, 'ground'),
+        if stage1_1.ground == None:
+            stage1_1.ground = [object.Box(40 * 3, 0, 0, 540 * 3, 'ground'),
                        object.Box(42 * 3, 0, 540*3, 550 * 3, 'ground'),
                        object.Box(44 * 3, 0, 550*3, 560 * 3, 'ground'),
                        object.Box(46 * 3, 0, 560*3, 570 * 3, 'ground'),
