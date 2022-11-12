@@ -21,6 +21,7 @@ def enter():
 
 def draw_1():
     global stack_stage
+    img.clip_draw(2 + int(m_x/2), img_hei - 67 - m_y - 200, 300, 200, 450, 300, 900, 600)
     img.clip_draw(screen_x + m_x, img_hei - screen_y - m_y - screen_hei, screen_wid, screen_hei, 450, 300, 900, 600)
     for st in stack_stage:
         st.draw_layer1()

@@ -1,83 +1,6 @@
 import charcter_sheet
 from pico2d import *
-RD, LD, RU, LU, UD, UU, DD, DU, X, Z = range(6)
-key_event_table = {
-    (SDL_KEYDOWN, SDLK_RIGHT): RD,
-    (SDL_KEYDOWN, SDLK_LEFT): LD,
-    (SDL_KEYUP, SDLK_RIGHT): RU,
-    (SDL_KEYUP, SDLK_LEFT): LU,
-    (SDL_KEYDOWN, SDLK_UP): UD,
-    (SDL_KEYDOWN, SDLK_DOWN): DD,
-    (SDL_KEYUP, SDLK_UP): UU,
-    (SDL_KEYUP, SDLK_DOWN): DU,
-    (SDL_KEYDOWN, SDLK_x): X,
-    (SDL_KEYDOWN, SDLK_z): Z
-}
-class leg_IDLE:
-    def enter(self):
-        pass
-    def exit(self):
-        pass
-    def do(self):
-        pass
-    def draw(self):
-        pass
-class leg_RUN:
-    def enter(self):
-        pass
-    def exit(self):
-        pass
-    def do(self):
-        pass
-    def draw(self):
-        pass
-class leg_JUMP:
-    def enter(self):
-        pass
-    def exit(self):
-        pass
-    def do(self):
-        pass
-    def draw(self):
-        pass
-class body_IDLE:
-    def enter(self):
-        pass
-    def exit(self):
-        pass
-    def do(self):
-        pass
-    def draw(self):
-        pass
-class body_RUN:
-    def enter(self):
-        pass
-    def exit(self):
-        pass
-    def do(self):
-        pass
-    def draw(self):
-        pass
-class body_ATTACK:
-    def enter(self):
-        pass
-    def exit(self):
-        pass
-    def do(self):
-        pass
-    def draw(self):
-        pass
-leg_state = {
-    leg_IDLE:  {RU: leg_IDLE,  LU: leg_IDLE,  RD:  leg_RUN,  LD: leg_RUN, X: leg_JUMP, Z: leg_IDLE},
-    leg_RUN:   {RU: leg_IDLE,  LU: leg_IDLE, RD: leg_IDLE, LD: leg_IDLE, X: leg_JUMP, Z: leg_RUN},
-    leg_JUMP:   {RU: leg_IDLE,  LU: leg_IDLE, RD: leg_IDLE, LD: leg_IDLE, X: leg_JUMP, Z: leg_RUN}
 
-}
-body_state = {
-    body_IDLE:  {RU: body_IDLE,  LU: body_IDLE,  RD:  body_RUN,  LD: body_RUN, X: leg_JUMP, Z: body_ATTACK},
-    body_RUN:   {RU:  body_IDLE,  LU: leg_IDLE, RD: leg_IDLE, LD: leg_IDLE, X: leg_JUMP, Z: body_ATTACK},
-    body_ATTACK:   {RU: body_ATTACK,  LU: body_ATTACK, RD: body_ATTACK, LD: body_ATTACK, X: body_ATTACK, Z: body_ATTACK}
-}
 class Charcter:
      def __init__(self):
          self.leg_frame = -1
@@ -85,7 +8,7 @@ class Charcter:
 
          self.image_1 = load_image('sprites/player.png')
          self.image_m1 = load_image('sprites/player_r.png')
-
+         self.image_b = load_image('sprites/bullet.png')
          self.up_body_list = charcter_sheet.handgun_waiting_body
          self.leg_list = charcter_sheet.waiting_leg
          self.leg_frame_m = len(self.leg_list)
@@ -121,7 +44,13 @@ class Charcter:
          elif self.direct_x == -1:
              self.image_m1.clip_draw(1278-x-wid, 2379 - y - hei, wid, hei, self.player_x - 2*px-sc_x, self.player_y + 2*py-sc_y, 2*wid, 2*hei)
              pass
-
+         for b in self.bullet:
+             if self.direct_x == -1:
+                 self.image_b.clip_composite_draw(0, 0, 27, 5, 0.0, 'h', b[0], b[1],
+                                                2 * 27, 2 * 5)
+             else:
+                 self.image_b.clip_composite_draw(0, 0, 27, 5, 0.0, '', b[0], b[1],
+                                                2 * 27, 2 * 5)
          # up_body
          self.body_frame = (self.body_frame + 1) % self.body_frame_m
          x, y, wid, hei, px, py = self.up_body_list[self.body_frame]
@@ -256,7 +185,12 @@ class Charcter:
      def update(self,sc_x):
         if self.player_x - sc_x + self.speed_x>0 and self.player_x - sc_x + self.speed_x< 900:
             self.player_x += (self.speed_x+self.accel_x)
-
+        if self.up_body_list == charcter_sheet.handgun_shot_body and self.body_frame == 4:
+            self.bullet.append([self.player_x+20-sc_x, self.player_y + 12,self.direct_x*20])
+        for b in self.bullet:
+            b[0] += b[2]
+            if b[0]- sc_x >910:
+                del b
         self.player_y += self.speed_y+self.accel_y
         self.accel_x = 0
         self.animation()

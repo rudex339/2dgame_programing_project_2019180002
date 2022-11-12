@@ -1,12 +1,13 @@
 from pico2d import *
 import game_framework
 import game_world
+import map
 
-from grass import Grass
-from boy import Boy
+import map
+from charcter import Charcter
 
 
-boy = None
+charcter = None
 grass = None
 
 def handle_events():
@@ -17,17 +18,16 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.quit()
         else:
-            boy.handle_event(event)
+            charcter.handle_event(event)
 
 
 # 초기화
 def enter():
-    global boy, grass
-    boy = Boy()
-    grass = Grass(0)
-    game_world.add_object(grass,0)
-    game_world.add_object(boy,1)
-    game_world.add_object(Grass(1), 2)
+    global charcter, grass
+    charcter = Charcter()
+    map.enter()
+    game_world.add_object(charcter,1)
+    #game_world.add_object( Map(1), 2)
 # 종료
 def exit():
     game_world.clear()
