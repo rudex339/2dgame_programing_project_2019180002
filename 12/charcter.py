@@ -25,6 +25,19 @@ body_key_event_table = {
     (SDL_KEYUP, SDLK_DOWN): DU,
     (SDL_KEYDOWN, SDLK_x): X
 }
+
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 40.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+# Boy Action Speed
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
+
+
 class leg_IDLE:
     frame_max = None
     @staticmethod
@@ -39,12 +52,12 @@ class leg_IDLE:
         return True
     @staticmethod
     def do(self):
-        self.frame_leg = (self.frame_leg+1) % leg_IDLE.frame_max
+        self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_IDLE.frame_max)
         pass
 
     @staticmethod
     def draw(self):
-        x, y, wid, hei, px, py = charcter_sheet.waiting_leg[self.frame_leg]
+        x, y, wid, hei, px, py = charcter_sheet.waiting_leg[(int)(self.frame_leg)]
         if self.dir == -1:
             self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei,0.0, 'h', self.x+ 2*px, self.y + 2*py, 2*wid, 2*hei)
         else:
@@ -58,23 +71,23 @@ class leg_RUN:
         self.frame_leg = 0
         if event == RD:
             self.dir = 1
-            self.speed_x += 10
+            self.speed_x += RUN_SPEED_PPS
         elif event == LD:
             self.dir = -1
-            self.speed_x -= 10
+            self.speed_x -= RUN_SPEED_PPS
         elif event == RU:
-            self.speed_x += 10
+            self.speed_x += RUN_SPEED_PPS
         elif event == LU:
-            self.speed_x -= 10
+            self.speed_x -= RUN_SPEED_PPS
         pass
     def exit(self,event):
         return True
     def do(self):
-        self.frame_leg = (self.frame_leg + 1) % leg_RUN.frame_max
-        self.x += self.speed_x
+        self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_RUN.frame_max)
+        self.x += self.speed_x* game_framework.frame_time
         pass
     def draw(self):
-        x, y, wid, hei, px, py = charcter_sheet.walking_leg[self.frame_leg]
+        x, y, wid, hei, px, py = charcter_sheet.walking_leg[(int)(self.frame_leg)]
         if self.dir == -1:
             self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px, self.y + 2 * py,
                                            2 * wid, 2 * hei)
@@ -96,12 +109,12 @@ class leg_JUMP:
         return True
     @staticmethod
     def do(self):
-        self.frame_leg = (self.frame_leg+1) % leg_IDLE.frame_max
+        self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_JUMP.frame_max)
         pass
 
     @staticmethod
     def draw(self):
-        x, y, wid, hei, px, py = charcter_sheet.walk_jump_leg[self.frame_leg]
+        x, y, wid, hei, px, py = charcter_sheet.walk_jump_leg[(int)(self.frame_leg)]
         if self.dir == -1:
             self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei,0.0, 'h', self.x+ 2*px, self.y + 2*py, 2*wid, 2*hei)
         else:
@@ -123,14 +136,14 @@ class leg_STOP:
 
     @staticmethod
     def do(self):
-        self.frame_leg = (self.frame_leg + 1)
-        if self.frame_leg == leg_STOP.frame_max:
+        self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time))
+        if (int)(self.frame_leg) == leg_STOP.frame_max:
             self.add_event(WAIT, 'leg')
         pass
 
     @staticmethod
     def draw(self):
-        x, y, wid, hei, px, py = charcter_sheet.walking_stop_leg[self.frame_leg]
+        x, y, wid, hei, px, py = charcter_sheet.walking_stop_leg[(int)(self.frame_leg)]
         if self.dir == -1:
             self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px, self.y + 2 * py,
                                            2 * wid, 2 * hei)
@@ -148,10 +161,10 @@ class body_IDLE:
     def exit(self,event):
         return True
     def do(self):
-        self.frame_body = (self.frame_body + 1)%body_IDLE.frame_max
+        self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % body_IDLE.frame_max)
         pass
     def draw(self):
-        x, y, wid, hei, px, py = charcter_sheet.handgun_waiting_body[self.frame_body]
+        x, y, wid, hei, px, py = charcter_sheet.handgun_waiting_body[(int)(self.frame_body)]
         if self.dir == -1:
             self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px* -1, self.y + 2 * py,
                                            2 * wid, 2 * hei)
@@ -172,11 +185,11 @@ class body_RUN:
         return True
 
     def do(self):
-        self.frame_body = (self.frame_body + 1) % body_RUN.frame_max
+        self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % body_RUN.frame_max)
         pass
 
     def draw(self):
-        x, y, wid, hei, px, py = charcter_sheet.handgun_walking_body[self.frame_body]
+        x, y, wid, hei, px, py = charcter_sheet.handgun_walking_body[(int)(self.frame_body)]
         if self.dir == -1:
             self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px* -1, self.y + 2 * py,
                                            2 * wid, 2 * hei)
@@ -197,13 +210,13 @@ class body_ATTACK:
         return True
 
     def do(self):
-        self.frame_body = self.frame_body + 1
-        if self.frame_body == body_ATTACK.frame_max:
+        self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time))
+        if (int)(self.frame_body) == body_ATTACK.frame_max:
             self.add_event(ATK, 'body')
         pass
 
     def draw(self):
-        x, y, wid, hei, px, py = charcter_sheet.handgun_shot_body[self.frame_body]
+        x, y, wid, hei, px, py = charcter_sheet.handgun_shot_body[(int)(self.frame_body)]
         if self.dir == -1:
             self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px * -1, self.y + 2 * py,
                                            2 * wid, 2 * hei)
@@ -226,7 +239,7 @@ body_state = {
 class Charcter:
 
     def __init__(self):
-        self.x, self.y = 800 // 2, 100
+        self.x, self.y = 800 // 2, 200
         self.frame_leg = 0
         self.frame_body = 0
         self.speed_x, self.speed_y, self.dir = 0, 0,1
@@ -259,7 +272,6 @@ class Charcter:
                 except KeyError:
                     print(self.cur_state_body, event)
                 self.cur_state_body.enter(self, event)
-        delay(0.1)
 
     def draw(self):
         self.cur_state_leg.draw(self)
