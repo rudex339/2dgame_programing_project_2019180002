@@ -3,14 +3,19 @@ collision_group = dict()
 
 def add_object(o,depth):
     world[depth].append(o)
+
 def add_objects(ol, depth):
     world[depth] += ol
+
 def remove_object(o):
-    for layer in world:
-        if o in layer:
+    for layer in objects:
+        try:
             layer.remove(o)
+            remove_collision_object(o)
             del o
             return
+        except:
+            pass
     raise ValueError('Trying destroy non existing object')
 def all_object():
     for layer in world:
@@ -51,3 +56,25 @@ def remove_collision_object(o):
     for pairs in collision_group.values():
         if o in pairs[0]: pairs[0].remove(o)
         elif o in pairs[1]: pairs[1].remove(o)
+
+
+class box:
+    def __init__(self,left,bottom,right,top):
+        self.left,self.bottom,self.right,self.top = left,bottom,right,top
+        self.event = []
+        pass
+    def get_bb(self):
+        return self.left,self.bottom,self.right,self.top
+    def handle_collision(self, other, group):
+        self.event.append([other,group])
+        pass
+    def all_callision(self):
+        for o in self.event:
+            other, group = o
+            del o
+            yield other, group
+    def move_box(self,dx,dy):
+        self.left, self.right += dx
+        self.bottom, self.top += dy
+    def change_box(self,left,bottom,right,top):
+        self.left,self.bottom,self.right,self.top = left,bottom,right,top

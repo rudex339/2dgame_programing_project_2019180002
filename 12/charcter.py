@@ -53,15 +53,22 @@ class leg_IDLE:
     @staticmethod
     def do(self):
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_IDLE.frame_max)
+        x, y, wid, hei, px, py = charcter_sheet.waiting_leg[(int)(self.frame_leg)]
+        left = self.x + 2*px -wid
+        right = self.x + 2*px +wid
+        top = self.y + 2*py +hei
+        bottom = self.y + 2*py -hei
+        self.legbox.change_box(left, bottom, right, top)
         pass
 
     @staticmethod
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.waiting_leg[(int)(self.frame_leg)]
+        sx, sy = self.x-server.background.window_left, self.y-server.background.window_bottom
         if self.dir == -1:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei,0.0, 'h', self.x+ 2*px, self.y + 2*py, 2*wid, 2*hei)
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei,0.0, 'h', sx+ 2*px, sy + 2*py, 2*wid, 2*hei)
         else:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', self.x + 2 * px, self.y + 2 * py,2 * wid, 2 * hei)
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', sx + 2 * px, sy + 2 * py,2 * wid, 2 * hei)
         pass
 class leg_RUN:
     frame_max = None
@@ -85,14 +92,22 @@ class leg_RUN:
     def do(self):
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_RUN.frame_max)
         self.x += self.speed_x* game_framework.frame_time
+
+        x, y, wid, hei, px, py = charcter_sheet.walking_leg[(int)(self.frame_leg)]
+        left = self.x + 2*px -wid
+        right = self.x + 2*px +wid
+        top = self.y + 2*py +hei
+        bottom = self.y + 2*py -hei
+        self.legbox.change_box(left, bottom, right, top)
         pass
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.walking_leg[(int)(self.frame_leg)]
+        sx, sy = self.x-server.background.window_left, self.y-server.background.window_bottom
         if self.dir == -1:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', sx + 2 * px, sy + 2 * py,
                                            2 * wid, 2 * hei)
         else:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', self.x + 2 * px, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', sx + 2 * px, sy + 2 * py,
                                            2 * wid, 2 * hei)
         pass
 class leg_JUMP:
@@ -110,15 +125,23 @@ class leg_JUMP:
     @staticmethod
     def do(self):
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_JUMP.frame_max)
+
+        x, y, wid, hei, px, py = charcter_sheet.walk_jump_leg[(int)(self.frame_leg)]
+        left = self.x + 2*px -wid
+        right = self.x + 2*px +wid
+        top = self.y + 2*py +hei
+        bottom = self.y + 2*py -hei
+        self.legbox.change_box(left, bottom, right, top)
         pass
 
     @staticmethod
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.walk_jump_leg[(int)(self.frame_leg)]
+        sx, sy = self.x-server.background.window_left, self.y-server.background.window_bottom
         if self.dir == -1:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei,0.0, 'h', self.x+ 2*px, self.y + 2*py, 2*wid, 2*hei)
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei,0.0, 'h', sx+ 2*px, sy + 2*py, 2*wid, 2*hei)
         else:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', self.x + 2 * px, self.y + 2 * py,2 * wid, 2 * hei)
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', sx + 2 * px, sy + 2 * py,2 * wid, 2 * hei)
         pass
 class leg_STOP:
     frame_max = None
@@ -139,16 +162,23 @@ class leg_STOP:
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time))
         if (int)(self.frame_leg) == leg_STOP.frame_max:
             self.add_event(WAIT, 'leg')
+        x, y, wid, hei, px, py = charcter_sheet.walking_stop_leg[(int)(self.frame_leg)]
+        left = self.x + 2*px -wid
+        right = self.x + 2*px +wid
+        top = self.y + 2*py +hei
+        bottom = self.y + 2*py -hei
+        self.legbox.change_box(left, bottom, right, top)
         pass
 
     @staticmethod
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.walking_stop_leg[(int)(self.frame_leg)]
+        sx, sy = self.x-server.background.window_left, self.y-server.background.window_bottom
         if self.dir == -1:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', sx + 2 * px, sy + 2 * py,
                                            2 * wid, 2 * hei)
         else:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', self.x + 2 * px, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', sx + 2 * px, sy + 2 * py,
                                            2 * wid, 2 * hei)
         pass
 class body_IDLE:
@@ -162,14 +192,22 @@ class body_IDLE:
         return True
     def do(self):
         self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % body_IDLE.frame_max)
+
+        x, y, wid, hei, px, py = charcter_sheet.handgun_waiting_body[(int)(self.frame_body)]
+        left = self.x + 2*px -wid
+        right = self.x + 2*px +wid
+        top = self.y + 2*py +hei
+        bottom = self.y + 2*py -hei
+        self.bodybox.change_box(left, bottom, right, top)
         pass
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.handgun_waiting_body[(int)(self.frame_body)]
+        sx, sy = self.x-server.background.window_left, self.y-server.background.window_bottom
         if self.dir == -1:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px* -1, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', sx + 2 * px* -1, sy + 2 * py,
                                            2 * wid, 2 * hei)
         else:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', self.x + 2 * px, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', sx + 2 * px, sy + 2 * py,
                                            2 * wid, 2 * hei)
         pass
 class body_RUN:
@@ -186,15 +224,23 @@ class body_RUN:
 
     def do(self):
         self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % body_RUN.frame_max)
+
+        x, y, wid, hei, px, py = charcter_sheet.handgun_walking_body[(int)(self.frame_body)]
+        left = self.x + 2*px -wid
+        right = self.x + 2*px +wid
+        top = self.y + 2*py +hei
+        bottom = self.y + 2*py -hei
+        self.bodybox.change_box(left, bottom, right, top)
         pass
 
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.handgun_walking_body[(int)(self.frame_body)]
+        sx, sy = self.x-server.background.window_left, self.y-server.background.window_bottom
         if self.dir == -1:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px* -1, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', sx + 2 * px* -1, sy + 2 * py,
                                            2 * wid, 2 * hei)
         else:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', self.x + 2 * px, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', sx + 2 * px, sy + 2 * py,
                                            2 * wid, 2 * hei)
         pass
 class body_ATTACK:
@@ -213,15 +259,23 @@ class body_ATTACK:
         self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time))
         if (int)(self.frame_body) == body_ATTACK.frame_max:
             self.add_event(ATK, 'body')
+            
+        x, y, wid, hei, px, py = charcter_sheet.handgun_shot_body[(int)(self.frame_body)]
+        left = self.x + 2*px -wid
+        right = self.x + 2*px +wid
+        top = self.y + 2*py +hei
+        bottom = self.y + 2*py -hei
+        self.bodybox.change_box(left, bottom, right, top)
         pass
 
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.handgun_shot_body[(int)(self.frame_body)]
+        sx, sy = self.x-server.background.window_left, self.y-server.background.window_bottom
         if self.dir == -1:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', self.x + 2 * px * -1, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, 'h', sx + 2 * px * -1, sy + 2 * py,
                                            2 * wid, 2 * hei)
         else:
-            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', self.x + 2 * px, self.y + 2 * py,
+            self.image.clip_composite_draw(x, 2379 - y - hei, wid, hei, 0.0, '', sx + 2 * px, sy + 2 * py,
                                            2 * wid, 2 * hei)
         pass
 leg_state = {
@@ -253,6 +307,9 @@ class Charcter:
 
         self.cur_state_leg.enter(self, None)
         self.cur_state_body.enter(self, None)
+
+        self.bodybox = game_world.box(0,0,0,0)
+        self.legbox = game_world.box(0,0,0,0)
     def update(self):
         self.cur_state_leg.do(self)
         self.cur_state_body.do(self)
@@ -288,12 +345,3 @@ class Charcter:
         if (event.type, event.key) in body_key_event_table:
             key_event = body_key_event_table[(event.type, event.key)]
             self.add_event(key_event, 'body')
-
-    def fire_ball(self):
-        print("fire ball")
-        ball = Ball(self.x, self.y, self.dir * 3)
-        game_world.add_object(ball,1)
-    def get_bb(self):
-        return self.x - 15, self.y - 50, self.x + 15, self.y + 50
-    def handle_collision(self,other,group):
-        pass

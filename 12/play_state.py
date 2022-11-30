@@ -1,8 +1,8 @@
 from pico2d import *
 import game_framework
 import game_world
-import map
 import server
+import map
 
 from charcter import Charcter
 
