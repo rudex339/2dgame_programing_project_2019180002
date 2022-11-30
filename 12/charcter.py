@@ -3,6 +3,7 @@ from pico2d import *
 import charcter_sheet
 import game_framework
 import game_world
+import server
 from ball import Ball
 
 RD, LD, RU, LU, UD, UU, DD, DU, X, Z, WAIT, ATK = range(12)
@@ -225,7 +226,7 @@ body_state = {
 class Charcter:
 
     def __init__(self):
-        self.x, self.y = 800 // 2, 70
+        self.x, self.y = 800 // 2, 100
         self.frame_leg = 0
         self.frame_body = 0
         self.speed_x, self.speed_y, self.dir = 0, 0,1
