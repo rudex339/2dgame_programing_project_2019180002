@@ -320,14 +320,6 @@ class Charcter:
         game_world.add_collision_pairs(self.legbox, None, "character:box")
     def update(self):
         self.speed_y -= RUN_SPEED_PPS/60
-        for other, group in self.legbox.all_collision():
-            if group == 'character:box':
-
-                    self.speed_y= 0
-                    self. y +=other.top-self.legbox.bottom
-            pass
-
-
 
         self.cur_state_leg.do(self)
         self.cur_state_body.do(self)
@@ -363,3 +355,13 @@ class Charcter:
         if (event.type, event.key) in body_key_event_table:
             key_event = body_key_event_table[(event.type, event.key)]
             self.add_event(key_event, 'body')
+    def collision(self):
+        for other, group in self.legbox.all_collision():
+            if group == 'character:box':
+                    px =  other.right - self.legbox.left
+                    py =  
+                    mx = 
+                    my
+                    self.speed_y= 0
+                    self. y +=other.top-self.legbox.bottom
+            pass
