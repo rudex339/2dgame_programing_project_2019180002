@@ -8,7 +8,7 @@ def add_objects(ol, depth):
     world[depth] += ol
 
 def remove_object(o):
-    for layer in objects:
+    for layer in world:
         try:
             layer.remove(o)
             remove_collision_object(o)
@@ -36,16 +36,17 @@ def add_collision_pairs(a,b,group):
     if group not in collision_group:
         print('add new group')
         collision_group[group]=[[],[]]
-    if a:
+    if a != None:
         if type(a) == list:
             collision_group[group][0]+=a
         else:
             collision_group[group][0].append(a)
-    if b:
+    if b != None:
         if type(b) == list:
             collision_group[group][1] += b
         else:
             collision_group[group][1].append(b)
+
 def all_collision_pairs():
     for group, pairs in collision_group.items(): #키 벨류를 모두 가져옴
         for a in pairs[0]:
@@ -68,13 +69,16 @@ class box:
     def handle_collision(self, other, group):
         self.event.append([other,group])
         pass
-    def all_callision(self):
+    def all_collision(self):
         for o in self.event:
-            other, group = o
-            del o
+            other, group = self.event.pop()
+
             yield other, group
     def move_box(self,dx,dy):
-        self.left, self.right += dx
-        self.bottom, self.top += dy
+        self.left, self.right = self.left+dx, self.right+dx
+        self.bottom, self.top = self.bottom+dy, self.top+dy
     def change_box(self,left,bottom,right,top):
         self.left,self.bottom,self.right,self.top = left,bottom,right,top
+    def compatible(self):
+        self.left, self.bottom, self.right, self.top = self.right, self.bottom, self.top, self.left
+        pass

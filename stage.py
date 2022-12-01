@@ -167,6 +167,8 @@ class stage1_2:
                        object.Box(48 * 3, 0, 1440*3, 1480 * 3, 'ground'),
                        object.Box(50 * 3, 0, 1480*3, 1520 * 3, 'ground'),
                        object.Box(52 * 3, 0, 1520*3, 1560 * 3, 'ground')]
+        for l in self.box_list:
+            l.compatible()
         self.barrigate = enemy.barricade_2()
         pass
     def draw_layer1(self):
