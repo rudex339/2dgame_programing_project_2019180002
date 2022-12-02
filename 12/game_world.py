@@ -71,9 +71,9 @@ class box:
         pass
     def all_collision(self):
         for o in self.event:
-            other, group = self.event.pop()
-
+            other, group = o
             yield other, group
+        self.event.clear()
     def move_box(self,dx,dy):
         self.left, self.right = self.left+dx, self.right+dx
         self.bottom, self.top = self.bottom+dy, self.top+dy
