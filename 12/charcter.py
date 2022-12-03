@@ -4,7 +4,7 @@ import charcter_sheet
 import game_framework
 import game_world
 import server
-from ball import Ball
+from bullet import Bullet
 
 RD, LD, RU, LU, UD, UU, DD, DU, X, Z, WAIT, ATK = range(12)
 leg_key_event_table = {
@@ -45,7 +45,6 @@ class leg_IDLE:
         if leg_IDLE.frame_max == None:
             leg_IDLE.frame_max = len(charcter_sheet.waiting_leg)
         self.frame_leg = 0
-        self.speed_x = 0
         pass
     @staticmethod
     def exit(self,event):
@@ -53,17 +52,9 @@ class leg_IDLE:
     @staticmethod
     def do(self):
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_IDLE.frame_max)
-        self.x += self.speed_x * game_framework.frame_time
-        self.y += self.speed_y * game_framework.frame_time
-
-        x, y, wid, hei, px, py = charcter_sheet.waiting_leg[(int)(self.frame_leg)]
-        left = self.x + 2*px -wid
-        right = self.x + 2*px +wid
-        top = self.y + 2*py +hei
-        bottom = self.y + 2*py -hei
-        self.legbox.change_box(left, bottom, right, top)
 
         if self.jump:
+            self.speed_y -= RUN_SPEED_PPS * 20
             self.add_event(Z, 'leg')
         pass
 
@@ -82,32 +73,14 @@ class leg_RUN:
         if leg_RUN.frame_max == None:
             leg_RUN.frame_max = len(charcter_sheet.walking_leg)
         self.frame_leg = 0
-        if event == RD:
-            self.dir = 1
-            self.speed_x += RUN_SPEED_PPS
-        elif event == LD:
-            self.dir = -1
-            self.speed_x -= RUN_SPEED_PPS
-        elif event == RU:
-            self.speed_x = 0
-        elif event == LU:
-            self.speed_x = 0
         pass
     def exit(self,event):
         return True
     def do(self):
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_RUN.frame_max)
-        self.x += self.speed_x* game_framework.frame_time
-        self.y += self.speed_y * game_framework.frame_time
-
-        x, y, wid, hei, px, py = charcter_sheet.walking_leg[(int)(self.frame_leg)]
-        left = self.x + 2*px -wid
-        right = self.x + 2*px +wid
-        top = self.y + 2*py +hei
-        bottom = self.y + 2*py -hei
-        self.legbox.change_box(left, bottom, right, top)
 
         if self.jump:
+            self.speed_y -= RUN_SPEED_PPS * 20
             self.add_event(Z, 'leg')
         pass
     def draw(self):
@@ -127,28 +100,20 @@ class leg_JUMP:
         if leg_JUMP.frame_max == None:
             leg_JUMP.frame_max = len(charcter_sheet.walk_jump_leg)
         self.frame_leg = 0
-        self.speed_y += RUN_SPEED_PPS*20
+        if not self.jump:
+            self.speed_y += RUN_SPEED_PPS*4
+            self.y += 10
+            self.legbox.move_box(0, 10)
         pass
 
     def exit(self,event):
         return True
 
     def do(self):
-        if self.speed_y == 0:
-            self.add_event(WAIT, 'leg')
-        self.x += self.speed_x* game_framework.frame_time
-        self.y += self.speed_y* game_framework.frame_time
-
-
-
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % leg_JUMP.frame_max)
 
-        x, y, wid, hei, px, py = charcter_sheet.walk_jump_leg[int(self.frame_leg)]
-        left = self.x + 2*px -15
-        right = self.x + 2*px +15
-        top = self.y + 2*py +15
-        bottom = self.y + 2*py -15
-        self.legbox.change_box(left, bottom, right, top)
+        if not self.jump:
+            self.add_event(WAIT, 'leg')
         pass
 
 
@@ -167,7 +132,6 @@ class leg_STOP:
         if leg_STOP.frame_max == None:
             leg_STOP.frame_max = len(charcter_sheet.walking_stop_leg)
         self.frame_leg = 0
-        self.speed_x = 0
         pass
 
     @staticmethod
@@ -176,18 +140,14 @@ class leg_STOP:
 
     @staticmethod
     def do(self):
-        x, y, wid, hei, px, py = charcter_sheet.walking_stop_leg[(int)(self.frame_leg)]
-        left = self.x + 2 * px - wid
-        right = self.x + 2 * px + wid
-        top = self.y + 2 * py + hei
-        bottom = self.y + 2 * py - hei
-        self.legbox.change_box(left, bottom, right, top)
 
         self.frame_leg = ((self.frame_leg + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time))
         if (int)(self.frame_leg) == leg_STOP.frame_max:
             self.add_event(WAIT, 'leg')
-        if self.jump:
+        elif self.jump:
             self.add_event(Z, 'leg')
+        elif self.speed_x != 0:
+            self.add_event(LD, 'leg')
         pass
 
     @staticmethod
@@ -212,13 +172,6 @@ class body_IDLE:
         return True
     def do(self):
         self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % body_IDLE.frame_max)
-
-        x, y, wid, hei, px, py = charcter_sheet.handgun_waiting_body[(int)(self.frame_body)]
-        left = self.x + 2*px -wid
-        right = self.x + 2*px +wid
-        top = self.y + 2*py +hei
-        bottom = self.y + 2*py -hei
-        self.bodybox.change_box(left, bottom, right, top)
         pass
     def draw(self):
         x, y, wid, hei, px, py = charcter_sheet.handgun_waiting_body[(int)(self.frame_body)]
@@ -244,13 +197,6 @@ class body_RUN:
 
     def do(self):
         self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % body_RUN.frame_max)
-
-        x, y, wid, hei, px, py = charcter_sheet.handgun_walking_body[(int)(self.frame_body)]
-        left = self.x + 2*px -wid
-        right = self.x + 2*px +wid
-        top = self.y + 2*py +hei
-        bottom = self.y + 2*py -hei
-        self.bodybox.change_box(left, bottom, right, top)
         pass
 
     def draw(self):
@@ -270,6 +216,8 @@ class body_ATTACK:
         if body_ATTACK.frame_max == None:
             body_ATTACK.frame_max = len(charcter_sheet.handgun_shot_body)
         self.frame_body = 0
+        bullet = Bullet(self.x+self.dir*33,self.y+32,self.dir)
+        game_world.add_object(bullet,2)
         pass
 
     def exit(self, event):
@@ -279,13 +227,6 @@ class body_ATTACK:
         self.frame_body = ((self.frame_body + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time))
         if (int)(self.frame_body) == body_ATTACK.frame_max:
             self.add_event(ATK, 'body')
-        else :
-            x, y, wid, hei, px, py = charcter_sheet.handgun_shot_body[(int)(self.frame_body)]
-            left = self.x + 2 * px - wid
-            right = self.x + 2 * px + wid
-            top = self.y + 2 * py + hei
-            bottom = self.y + 2 * py - hei
-            self.bodybox.change_box(left, bottom, right, top)
         pass
 
     def draw(self):
@@ -313,10 +254,11 @@ body_state = {
 class Charcter:
 
     def __init__(self):
-        self.x, self.y = 800 // 2, 200
+        self.x, self.y = 200, 300
         self.frame_leg = 0
         self.frame_body = 0
         self.speed_x, self.speed_y, self.dir = 0, 0,1
+        self.temp_sp_x,self.temp_sp_y = 0,0
         self.image = load_image('sprites/player.png')
 
         self.event_que_leg = []
@@ -328,15 +270,16 @@ class Charcter:
         self.cur_state_leg.enter(self, None)
         self.cur_state_body.enter(self, None)
 
-        self.bodybox = game_world.box(0,0,0,0)
-        self.legbox = game_world.box(0,0,0,0)
+        self.legbox = game_world.box(self.x-15 ,self.y-21,self.x+15,self.y+21)
 
         self.jump = True
         game_world.add_collision_pairs(self.legbox, None, "character:box")
+        game_world.add_collision_pairs(self.legbox, None, "character:enemy")
+        game_world.add_collision_pairs(self.legbox, None, "character:boat")
     def update(self):
         self.collision()
 
-        self.speed_y -= RUN_SPEED_PPS / 60
+        self.speed_y -= RUN_SPEED_PPS / 20
 
         self.cur_state_leg.do(self)
         self.cur_state_body.do(self)
@@ -357,9 +300,18 @@ class Charcter:
                     print(self.cur_state_body, event)
                 self.cur_state_body.enter(self, event)
 
+        self.x += (self.speed_x +self.temp_sp_x) * game_framework.frame_time
+        self.y += (self.speed_y) * game_framework.frame_time
+        self.legbox.move_box((self.speed_x +self.temp_sp_x) * game_framework.frame_time,
+                             (self.speed_y) * game_framework.frame_time)
+
+        self.x = clamp(server.background.window_left+20,self.x,server.background.window_left+880)
+
     def draw(self):
         self.cur_state_leg.draw(self)
         self.cur_state_body.draw(self)
+        x1, y1, x2, y2 = self.legbox.get_bb()
+        draw_rectangle(x1-server.background.window_left, y1, x2-server.background.window_left, y2)
     def add_event(self, event,state):
         if state == 'leg':
             self.event_que_leg.insert(0, event)
@@ -372,18 +324,41 @@ class Charcter:
         if (event.type, event.key) in body_key_event_table:
             key_event = body_key_event_table[(event.type, event.key)]
             self.add_event(key_event, 'body')
-    def collision(self):
 
-        count = 0
+        if event.type == SDL_KEYDOWN and event.key == SDLK_RIGHT:
+            self.dir = 1
+            self.speed_x += RUN_SPEED_PPS
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_LEFT:
+            self.dir = -1
+            self.speed_x -= RUN_SPEED_PPS
+        elif event.type == SDL_KEYUP and event.key == SDLK_RIGHT:
+            self.speed_x -= RUN_SPEED_PPS
+        elif event.type == SDL_KEYUP and event.key == SDLK_LEFT:
+            self.speed_x += RUN_SPEED_PPS
+
+    def collision(self):
+        self.jump = True
+        self.temp_sp_x = 0
         for other, group in self.legbox.all_collision():
             if group == 'character:box':
-                if self.legbox.bottom + self.legbox.top < other.top + other.bottom:
-                    self.y += other.bottom - self.legbox.top
-                    self.legbox.move_box(0,other.bottom - self.legbox.top)
-                    self.speed_y = 0
+                if abs(other.bottom - self.legbox.top)<50 or abs(other.top - self.legbox.bottom)<50:
+                    if self.legbox.bottom + self.legbox.top < other.top + other.bottom:
+                        self.y += other.bottom - self.legbox.top
+                        self.legbox.move_box(0, other.bottom - self.legbox.top)
+                        self.speed_y = 0
+                    else:
+                        self.y += other.top - self.legbox.bottom
+                        self.legbox.move_box(0, other.top - self.legbox.bottom)
+                        self.speed_y = 0
+                        self.jump = False
+
                 else:
-                    self.y += other.top - self.legbox.bottom
-                    self.legbox.move_box(0, other.top - self.legbox.bottom)
-                    self.speed_y = 0
-                    self.jump = False
+                    if self.legbox.left + self.legbox.right < other.left + other.right:
+                        self.x += other.left - self.legbox.right
+                        self.legbox.move_box(other.left - self.legbox.right,0)
+                    else:
+                        self.x += other.right - self.legbox.left
+                        self.legbox.move_box(other.right - self.legbox.left,0)
+            elif group == "character:boat":
+                self.temp_sp_x += other.speed
             pass
