@@ -3,6 +3,9 @@ import game_world
 import server
 import game_framework
 from M_3_Rocket import M_3
+import exposion
+from mingkong import Mingkong
+import random
 
 image = None
 img_hei = 1685
@@ -29,6 +32,12 @@ class background:
     def __init__(self):#x,y,wid,hei
         self.object = [2,67,300,200]
         self.my=0
+
+        self.bgm = load_music("sound/mission_1.mp3")
+        self.bgm.set_volume(32)
+        self.bgm.repeat_play()
+
+
         pass
 
     def exit(self):
@@ -44,6 +53,8 @@ class background:
         if server.character.x >2818 * 3 - 60:
             if self.my < 20:
                 self.my +=RUN_SPEED_PPS * game_framework.frame_time
+
+
         pass
 
     def draw(self):
@@ -59,6 +70,7 @@ class background:
 class stage:
     def __init__(self):  # x,y,wid,hei
         self.b_stage = [stage_1()]
+        self.timer = 0
         pass
 
     def exit(self):
@@ -71,6 +83,11 @@ class stage:
                 self.b_stage.append(i.next())
             elif op == 2:
                 self.b_stage.pop(0)
+        self.timer = (self.timer + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 150
+        if int(self.timer) == 0:
+            x = random.randrange(0, 900)
+            m = Mingkong(x + window_left, 300 * 2, -1)
+            game_world.add_object(m, 2)
         pass
 
     def draw(self):
@@ -85,6 +102,7 @@ class stage_1:
     def __init__(self):  # x,y,wid,hei
         self.object = [1, 1217, 300, 200]
         self.small_stage = [stage_1_1()]
+
         pass
 
     def exit(self):
@@ -121,6 +139,7 @@ class stage_1:
         return stage_2()
 class stage_1_1:
     def __init__(self):#x,y,wid,hei
+
         self.object =[1,1217,300,200]
         self.objects = []
         o =Object([[2,669,564,24,282,52],
@@ -252,7 +271,8 @@ class Barrigate1:
         self.hit_box.compatible()
 
         game_world.add_collision_pairs(None, self.box_list, "character:box")
-        game_world.add_collision_pairs(None, self.hit_box, "bullet:hitbox")
+        game_world.add_collision_pairs(self.hit_box,None,  "bullet:hitbox")
+
         pass
 
     def exit(self):
@@ -263,6 +283,7 @@ class Barrigate1:
         global window_left
         if self.hp>0 and window_left > 920*3-900:
             window_left =920*3-900
+
             pass
 
 
@@ -285,6 +306,8 @@ class Barrigate1:
             self.layer_2 = Object([[3314, 128, 280,83 , 785, 42]], 1)
             game_world.add_object(self.layer_2, 4)
 
+            exposion.ex_bgm1.set_volume(32)
+            exposion.ex_bgm1.play(1)
             self.hp -= 1
             return 1
         return 0
@@ -356,7 +379,7 @@ class barrigate2:
         self.hit_box.compatible()
 
         game_world.add_collision_pairs(None, self.box_list, "character:box")
-        game_world.add_collision_pairs(None, self.hit_box, "bullet:hitbox")
+        game_world.add_collision_pairs(self.hit_box,None,  "bullet:hitbox")
         pass
 
     def exit(self):
@@ -389,7 +412,8 @@ class barrigate2:
             for l in self.box_list:
                 game_world.remove_collision_object(l)
             game_world.remove_collision_object(self.hit_box)
-
+            exposion.ex_bgm1.set_volume(32)
+            exposion.ex_bgm1.play(1)
             self.hp -= 1
             return 1
         return 0

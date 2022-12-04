@@ -211,13 +211,16 @@ class body_RUN:
         pass
 class body_ATTACK:
     frame_max = None
-
+    bgm = None
     def enter(self, event):
         if body_ATTACK.frame_max == None:
             body_ATTACK.frame_max = len(charcter_sheet.handgun_shot_body)
+            body_ATTACK.bgm = load_wav("sound/effect/st1_01.wav")
         self.frame_body = 0
         bullet = Bullet(self.x+self.dir*33,self.y+32,self.dir)
         game_world.add_object(bullet,2)
+        body_ATTACK.bgm.set_volume(32)
+        body_ATTACK.bgm.play(1)
         pass
 
     def exit(self, event):
@@ -276,6 +279,7 @@ class Charcter:
         game_world.add_collision_pairs(self.legbox, None, "character:box")
         game_world.add_collision_pairs(self.legbox, None, "character:enemy")
         game_world.add_collision_pairs(self.legbox, None, "character:boat")
+        game_world.add_collision_pairs(self.legbox, None, "character:check_box")
     def update(self):
         self.collision()
 

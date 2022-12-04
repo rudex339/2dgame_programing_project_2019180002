@@ -3,7 +3,7 @@ import game_framework
 import game_world
 import server
 import map
-
+import exposion
 from charcter import Charcter
 
 def enter():
@@ -11,6 +11,7 @@ def enter():
     game_world.add_object(server.character, 4)
     server.background = map
     server.background.enter()
+    exposion.enter()
 
 def exit():
     game_world.clear()

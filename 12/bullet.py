@@ -20,7 +20,7 @@ class Bullet:
                         Bullet.image = load_image('sprites/bullet.png')
             self.x, self.y, self.dir = x,y, dir
             game_world.add_collision_pairs(self, None, "character:box")
-            game_world.add_collision_pairs(self, None, "bullet:hitbox")
+            game_world.add_collision_pairs( None,self, "bullet:hitbox")
         def draw(self):
                 sx, sy = self.x - server.background.window_left, self.y - server.background.window_bottom
                 if self.dir == -1:
@@ -48,7 +48,8 @@ class Bullet:
                 elif group == 'bullet:hitbox':
                     print("bullet hit")
                     pass
-
                 game_world.remove_object(self)
                 game_world.remove_collision_object(self)
+
+
                 pass

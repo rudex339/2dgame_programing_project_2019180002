@@ -3,6 +3,7 @@ from pico2d import *
 import game_world
 import game_framework
 import server
+import exposion
 
 AT, WAIT= 1, 2
 
@@ -98,7 +99,7 @@ class M_3:
 
         game_world.add_collision_pairs(None, self.box_list, "character:box")
         game_world.add_collision_pairs(None, self.box_list, "boat:box")
-        game_world.add_collision_pairs(None, hit_box, "bullet:hitbox")
+        game_world.add_collision_pairs(hit_box,None,  "bullet:hitbox")
 
         self.box_list.append(hit_box)
         pass
@@ -132,6 +133,9 @@ class M_3:
 
 
         if self.hp == 0:
+            exposion.ex_bgm1.set_volume(32)
+            exposion.ex_bgm1.play(1)
+
             for box in self.box_list:
                 game_world.remove_collision_object(box)
             game_world.remove_object(self.object)
