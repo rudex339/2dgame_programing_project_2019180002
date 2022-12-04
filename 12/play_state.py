@@ -4,6 +4,7 @@ import game_world
 import server
 import map
 import exposion
+import clear_state
 from charcter import Charcter
 
 def enter():
@@ -57,6 +58,9 @@ def update():
         if collide(a, b):
             a.handle_collision(b, group)
             b.handle_collision(a, group)
+
+    if server.character.x > 2373*6-900:
+        game_framework.push_state(clear_state)
 
 
 

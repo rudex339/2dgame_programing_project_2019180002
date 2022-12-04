@@ -257,7 +257,7 @@ body_state = {
 class Charcter:
 
     def __init__(self):
-        self.x, self.y = 200, 300
+        self.x, self.y = 200, 400
         self.frame_leg = 0
         self.frame_body = 0
         self.speed_x, self.speed_y, self.dir = 0, 0,1
@@ -314,8 +314,6 @@ class Charcter:
     def draw(self):
         self.cur_state_leg.draw(self)
         self.cur_state_body.draw(self)
-        x1, y1, x2, y2 = self.legbox.get_bb()
-        draw_rectangle(x1-server.background.window_left, y1, x2-server.background.window_left, y2)
     def add_event(self, event,state):
         if state == 'leg':
             self.event_que_leg.insert(0, event)

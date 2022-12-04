@@ -93,10 +93,6 @@ class stage:
     def draw(self):
         for i in self.b_stage:
             i.draw()
-            for j in i.small_stage:
-                for k in j.box_list:
-                    x1, y1, x2, y2 = k.get_bb()
-                    draw_rectangle(x1 - window_left, y1, x2 - window_left, y2)
         pass
 class stage_1:
     def __init__(self):  # x,y,wid,hei
